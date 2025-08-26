@@ -1,0 +1,84 @@
+# ===========================================
+# Real-Time Chat Room - Docker Compose
+# ===========================================
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  database:
+    image: postgres:15
+    container_name: chat-postgres
+    environment:
+      POSTGRES_DB: chat_room_db
+      POSTGRES_USER: chat_user
+      POSTGRES_PASSWORD: your_password
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chat_user -d chat_room_db"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Optional: pgAdmin for database management
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: chat-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - database
+    restart: unless-stopped
+    profiles:
+      - pgadmin
+
+volumes:
+  postgres_data:
+
+# ===========================================
+# Usage Instructions
+# ===========================================
+
+# Start only PostgreSQL:
+# docker-compose up -d database
+
+# Start PostgreSQL + pgAdmin:
+# docker-compose --profile pgadmin up -d
+
+# Stop all services:
+# docker-compose down
+
+# Remove volumes (deletes all data):
+# docker-compose down -v
+
+# ===========================================
+# Access Information
+# ===========================================
+
+# PostgreSQL Connection:
+# Host: localhost
+# Port: 5432
+# Database: chat_room_db
+# Username: chat_user
+# Password: your_password
+
+# pgAdmin (if enabled):
+# URL: http://localhost:5050
+# Email: admin@example.com
+# Password: admin
+
+# ===========================================
+# Environment Variables
+# ===========================================
+
+# Add to your .env file:
+# DATABASE_URL=postgresql://chat_user:your_password@localhost:5432/chat_room_db

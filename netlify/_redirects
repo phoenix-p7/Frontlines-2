@@ -1,0 +1,12 @@
+# API routes to serverless functions
+/api/messages               /.netlify/functions/messages
+/api/messages/*             /.netlify/functions/reactions
+/api/join                   /.netlify/functions/join  
+/api/typing                 /.netlify/functions/typing
+/api/admin/login            /.netlify/functions/admin-login
+/api/admin/messages         /.netlify/functions/admin-messages
+/api/admin/messages/*       /.netlify/functions/admin-messages
+/api/admin/clear-chat       /.netlify/functions/admin-clear-chat
+
+# Catch-all for SPA routing
+/*    /index.html   200
